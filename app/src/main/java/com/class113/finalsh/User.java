@@ -1,22 +1,24 @@
 package com.class113.finalsh;
 
 public class User {
-    private String  fullName , password,email ;
+    private String userName;
+    private String password;
+    private String email ;
 
     public User(String fullName, String password, String email) {
-        this.fullName = fullName;
+        this.userName = fullName;
         this.password = password;
         this.email = email;
     }
     public User(){//to enable firebase to do its work
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setFullName(String fname) {
-        this.fullName = fname;
+    public void setUserName(String fname) {
+        this.userName = fname;
     }
 
 
@@ -41,7 +43,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "fullName='" + fullName + '\'' +
+                "userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 '}';

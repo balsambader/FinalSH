@@ -2,7 +2,6 @@ package com.class113.finalsh;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,7 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -57,27 +59,27 @@ public class Login extends Activity {
             public void onClick(View v) {
                 String username   = usernameET.getText().toString();//convert edittext username,password to texts(String)
                 String password  = passwordET.getText().toString();
-
-                databaseReference.addValueEventListener(new ValueEventListener() {
+                databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                        DataSnapshot snapshot = task.getResult();
                         if(snapshot.child(username).exists()){
                             User user  = snapshot.child(username).getValue(User.class);//checks if login exists
                             if( user.getPassword().equals(password)){
                                 Intent intent = new Intent(Login.this,MainActivity.class);
-                                editor.putString("userName",user.getFullName());//saves as key : value
+                                editor.putString("userName",user.getUserName());//saves as key : value
                                 editor.putString("password",user.getPassword());
                                 editor.commit();//finish editing
                                 startActivity(intent);
+                            }else{
+                                Toast.makeText(Login.this,"password Error",Toast.LENGTH_LONG).show();
                             }
+                        }else {
+                            Toast.makeText(Login.this, "User Name isn't Exist", Toast.LENGTH_LONG).show();
                         }
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
                 });
+
 
             }
         });
