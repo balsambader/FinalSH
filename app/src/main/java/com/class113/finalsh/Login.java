@@ -22,6 +22,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class Login extends Activity {
+    protected static final int REQUEST_CODE_SIGN_UP = 55;
+
     private Button loginBtn ;
     private EditText usernameET, passwordET;
     private TextView registerNowClick;
@@ -46,10 +48,10 @@ public class Login extends Activity {
         //this saves data so we dont register again
         sharedPreferences = getSharedPreferences("data.txt" , MODE_PRIVATE);//uploads info in data.txt file
         editor = sharedPreferences.edit();
-        String name = sharedPreferences.getString("userName",null);
+        String name = sharedPreferences.getString("username",null);
         if(name != null){// there is a user who has logged in
             Intent intent = new Intent(Login.this,MainActivity.class);
-            intent.putExtra("userName",name);
+            intent.putExtra("username",name);
             startActivity(intent);
         }
 
@@ -67,7 +69,7 @@ public class Login extends Activity {
                             User user  = snapshot.child(username).getValue(User.class);//checks if login exists
                             if( user.getPassword().equals(password)){
                                 Intent intent = new Intent(Login.this,MainActivity.class);
-                                editor.putString("userName",user.getUserName());//saves as key : value
+                                editor.putString("username",user.getUserName());//saves as key : value
                                 editor.putString("password",user.getPassword());
                                 editor.commit();//finish editing
                                 startActivity(intent);
@@ -90,7 +92,7 @@ public class Login extends Activity {
             public void onClick(View v) {
                 //intent: saves data (and transform it between two activities)
                 Intent intent  = new Intent(Login.this,RegisterSignUp.class);
-                startActivityForResult(intent, RegisterSignUp.requestCodeSignUp);//goes from this activity to another and then continues methods below here from the method: onActivityREsult
+                startActivityForResult(intent, REQUEST_CODE_SIGN_UP);//goes from this activity to another and then continues methods below here from the method: onActivityREsult
             }
         });
 
@@ -101,7 +103,9 @@ public class Login extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == RegisterSignUp.requestCodeSignUp && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_CODE_SIGN_UP && resultCode == RESULT_OK) {
+            usernameET.setText( data.getStringExtra("username"));
+            passwordET.setText(data.getStringExtra("password"));
         }
     }
 }
